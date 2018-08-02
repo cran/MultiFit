@@ -25,10 +25,10 @@ Rcpp::List make_CDF( int lp,
     vec pvals(lsupp);
 
     uvec idx = Rcpp::as<uvec>(Rcpp::duplicated(all_probs));
-    if (accu(ap.elem(find(idx==1))) < pow(10,-20)) {
+    if (accu(ap.elem(find(idx==1))) < 1e-20) {
       pvals = cumsum(sort(ap));
     } else {
-      if (max(abs(ap.rows(0, lsupp/2 - 1)-reverse(ap.rows(lsupp-lsupp/2, lsupp - 1))))< pow(10,-7)) {
+      if (max(abs(ap.rows(0, lsupp/2 - 1)-reverse(ap.rows(lsupp-lsupp/2, lsupp - 1))))< 1e-7) {
         vec u = cumsum(ap.rows(0, lsupp/2-1));
         IntegerVector ii = seq(0, u.n_elem-1);
         uvec idx = vectorise(repmat(Rcpp::as<urowvec>(ii), 2, 1));
@@ -39,7 +39,7 @@ Rcpp::List make_CDF( int lp,
           pvals(pvals.n_elem-1) = 1;
         }
       } else {
-        double relErr = 1.0 + pow(10, -7);
+        double relErr = 1.0 + 1e-7;
         for (int i=0; i<lsupp; i++) {
           pvals(i) = accu(ap(find(ap <= ap(support(i)-lo)*relErr)));
         }

@@ -44,7 +44,7 @@ Rcpp::List discretizeCpp( arma::mat a,
   umat y0 = b < y_mid ;
   umat tables(ij.n_rows, 8);
   tables.cols(0, 1) = ij;
-  for (int c=0; c<ij.n_rows; c++) {
+  for (unsigned int c=0; c<ij.n_rows; c++) {
     int i = ij(c, 0) - 1;
     int j = ij(c, 1) - 1;
     tables(c,2) = accu(x0.col(i) % y0.col(j));

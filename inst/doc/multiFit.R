@@ -39,9 +39,9 @@ library(png)
 library(qgraph)
 multiTree(xy=xy, fit=fit, filename="first_example")
 
-## ------------------------------------------------------------------------
-perm.null.first_example = permNullTest(perm.null.sim=1000L, xy=xy, fit=fit,
-                                       verbose=TRUE)
+## ---- eval=F-------------------------------------------------------------
+#  perm.null.first_example = permNullTest(perm.null.sim=1000L, xy=xy, fit=fit,
+#                                         verbose=TRUE)
 
 ## ------------------------------------------------------------------------
 fit100 = multiFit(xy, M=100, verbose=TRUE)
@@ -66,8 +66,8 @@ multiSummary(xy=xy, fit=fit100, alpha=0.005, plot.tests=FALSE)
 #                 min.win.tot = 10L, min.row.tot = 4L, min.col.tot = 4L)
 
 ## ---- fig.show='hold'----------------------------------------------------
-# Generate data for two random vectors, each of dimension 2, 1200 observations:
-n=1200
+# Generate data for two random vectors, each of dimension 2, 800 observations:
+n=800
 x = matrix(0, ncol=2, nrow=n)
 y = matrix(0, ncol=2, nrow=n)
 
@@ -143,22 +143,22 @@ fit.rtt.circ = multiFit(xy=xy.rtt.circ, test.method="chi.sq", verbose=TRUE)
 multiSummary(xy=xy.rtt.circ, fit=fit.rtt.circ, only.rk=1:4)
 
 ## ---- fig.show='hold'----------------------------------------------------
-n=400
+n=550
 x=matrix(0,nrow=n,ncol=2)
 x[,1]=runif(n)
 x[,2]=rbeta(n,.3,.3)
 
-epsilon=rnorm(n,0,0.2)
+epsilon=rnorm(n,0,0.3)
 
 y=matrix(0,nrow=n,ncol=1)
-y[,1]=sin(10*x[,1])*(x[,2]>0.9)+sin(40*x[,1])*(x[,2]<=0.9)+epsilon
+y[,1]=sin(10*x[,1])*(x[,2]>0.75)+sin(40*x[,1])*(x[,2]<=0.75)+epsilon
 
 plot(x[,1],y[,1], col="grey", pch="x", xlab="x2", ylab="y2")
 plot(x[,2],y[,1], col="grey", pch="x", xlab="x2", ylab="y2")
 
 ## ---- fig.show='hold'----------------------------------------------------
 fit.superimpose=multiFit(x=x, y=y, M=100)
-multiSummary(x=x, y=y, fit=fit.superimpose, alpha=0.005)
+multiSummary(x=x, y=y, fit=fit.superimpose, alpha=0.0001)
 
 ## ---- fig.show='hold'----------------------------------------------------
 n=300

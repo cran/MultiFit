@@ -4,9 +4,6 @@
 using namespace Rcpp;
 using namespace arma;
 
-// extern "C"
-// void someCUDAcode();
-
 //[[Rcpp::export]]
 Rcpp::List single_Fisher_test(arma::rowvec t,
                               bool correct, 
@@ -23,12 +20,12 @@ Rcpp::List single_Fisher_test(arma::rowvec t,
 
   all_probs = exp(all_probs - max(all_probs));
   all_probs /= sum(all_probs);
-  double relErr = 1.0 + pow(10, -7);
+  double relErr = 1.0 + 1e-7;
   double pv = accu(all_probs(find(all_probs <= all_probs(n00-lo)*relErr)));
   if (pv==0) pv = DBL_MIN;
   double pv_correct = 0;
   if (correct) {
-    double relErrNeg = 1 - pow(10, -7);
+    double relErrNeg = 1 - 1e-7;
     pv_correct = (pv+accu(all_probs(find(all_probs <= all_probs(n00-lo)*relErrNeg))))/2;
     if (pv_correct==0) pv_correct = DBL_MIN;
   }

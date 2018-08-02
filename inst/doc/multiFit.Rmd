@@ -89,7 +89,7 @@ We see that, in agreement with the output of the `multiSummary` function, nodes 
 
 #### Global Test with a Permutation Null:
 We may also generate a permutation null distribution for global the test statistics that are shown in the output of `MultiFit` and compute the respective p-values using `permNullTest` and specifying the size of the simulated null distribution with the parameter `perm.null.sim`.
-```{r}
+```{r, eval=F}
 perm.null.first_example = permNullTest(perm.null.sim=1000L, xy=xy, fit=fit,
                                        verbose=TRUE)
 ```
@@ -126,8 +126,8 @@ ex3 = multiFit(xy, M=Inf, max.res=Inf,
 
 #### Generate a Local Signal:
 ```{r, fig.show='hold'}
-# Generate data for two random vectors, each of dimension 2, 1200 observations:
-n=1200
+# Generate data for two random vectors, each of dimension 2, 800 observations:
+n=800
 x = matrix(0, ncol=2, nrow=n)
 y = matrix(0, ncol=2, nrow=n)
 
@@ -231,24 +231,24 @@ Here we examine `MultiFit`'s ability to
 <li> given a third dimension that determines which data points belong to which wave, to see if our algorithm successfully identifies this relation. 
 </ol>
 
-We take $\mathbf{x}$ to be a two dimensional random variable and $\mathbf{y}$ to be one dimensional, all with 400 data points. Define $x_1\sim U(0,1)$, $x_2\sim Beta(0.3,0.3)$ independent of $x_1$, and define:
+We take $\mathbf{x}$ to be a two dimensional random variable and $\mathbf{y}$ to be one dimensional, all with 550 data points. Define $x_1\sim U(0,1)$, $x_2\sim Beta(0.3,0.3)$ independent of $x_1$, and define:
 
 $Y = \begin{cases}
-\sin(10\cdot x_1) + \epsilon, & \text{if }x_2 > 0.9\\
-\sin(40\cdot  x_1) + \epsilon, & \text{if }x_2\leq0.9
+\sin(10\cdot x_1) + \epsilon, & \text{if }x_2 > 0.75\\
+\sin(40\cdot  x_1) + \epsilon, & \text{if }x_2\leq0.75
 \end{cases}$
 
 #### Generate the Signal:
 ```{r, fig.show='hold'}
-n=400
+n=550
 x=matrix(0,nrow=n,ncol=2)
 x[,1]=runif(n)
 x[,2]=rbeta(n,.3,.3)
 
-epsilon=rnorm(n,0,0.2)
+epsilon=rnorm(n,0,0.3)
 
 y=matrix(0,nrow=n,ncol=1)
-y[,1]=sin(10*x[,1])*(x[,2]>0.9)+sin(40*x[,1])*(x[,2]<=0.9)+epsilon
+y[,1]=sin(10*x[,1])*(x[,2]>0.75)+sin(40*x[,1])*(x[,2]<=0.75)+epsilon
 
 plot(x[,1],y[,1], col="grey", pch="x", xlab="x2", ylab="y2")
 plot(x[,2],y[,1], col="grey", pch="x", xlab="x2", ylab="y2")
@@ -257,10 +257,10 @@ plot(x[,2],y[,1], col="grey", pch="x", xlab="x2", ylab="y2")
 #### Test and Summarize:
 ```{r, fig.show='hold'}
 fit.superimpose=multiFit(x=x, y=y, M=100)
-multiSummary(x=x, y=y, fit=fit.superimpose, alpha=0.005)
+multiSummary(x=x, y=y, fit=fit.superimpose, alpha=0.0001)
 ```
 
-Notice how the seperate signals are identified in the 2$^{nd}$ and 3$^{rd}$ ranking tests.
+Notice how the seperate signals are identified in the 1$^{st}$ and 5$^{th}$ ranking tests.
 
 ### A Univariate Example:
 In the univariate case, Ma and Mao ([2017](https://arxiv.org/abs/1608.07885)) show that the p-values for Fisher's exact test are mutually independent under the null hypothesis of independence. Thus, we may also generate approximate and theoretical null distributions for the global test statistics that are much faster to compute, compared to the permutation null distribution.
