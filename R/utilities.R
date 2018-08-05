@@ -475,7 +475,7 @@ multiTree = function(xy, x=NULL, y=NULL, fit, show.all=FALSE,
 
       x.loc = x[,i][mask]
       y.loc = y[,j][mask]
-      png(paste0(images.path, node.name, m,".png"), width=80, height=60)
+      png(file.path(images.path, paste0(node.name, m,".png")), width=80, height=60)
       par(mar=(c(1,0.8,0,0)))
 
       plot(x[,i],y[,j], col="grey", pch=".", xlab=NA, ylab=NA, xaxt='n', yaxt='n')

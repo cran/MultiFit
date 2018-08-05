@@ -1,6 +1,6 @@
 ---
 title: "MultiFIT: Multivariate Multiscale Framework for Independence Tests"
-author: "Shai Gorsky and Li Ma"
+author: "S. Gorsky and L. Ma"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{MultiFit}

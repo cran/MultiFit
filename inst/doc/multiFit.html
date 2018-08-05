@@ -10,7 +10,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<meta name="author" content="Shai Gorsky and Li Ma" />
+<meta name="author" content="S. Gorsky and L. Ma" />
 
 
 <title>MultiFIT: Multivariate Multiscale Framework for Independence Tests</title>
@@ -68,7 +68,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 <h1 class="title toc-ignore">MultiFIT: Multivariate Multiscale Framework for Independence Tests</h1>
-<h4 class="author"><em>Shai Gorsky and Li Ma</em></h4>
+<h4 class="author"><em>S. Gorsky and L. Ma</em></h4>
 
 
 
@@ -134,13 +134,13 @@ fit =<span class="st"> </span><span class="kw">multiFit</span>(xy, <span class="
 ## Resolution 2/4: scanning 40 windows, performing 120 tests
 ## Resolution 3/4: scanning 40 windows, performing 128 tests
 ## Resolution 4/4: scanning 40 windows, performing 144 tests
-## Time difference of 0.04018426 secs
+## Time difference of 0.03971839 secs
 ## Individual tests completed, post-processing...
 ## H: Computing all adjusted p-values...
 ## Hcorrected: Computing all adjusted p-values...
 ## MH: Computing CDF...
 ## MH: Computing all adjusted p-values...
-## Time difference of 0.001956463 secs
+## Time difference of 0.001939058 secs
 ## 
 ## Fisher's Exact Tests:
 ## Mean of -log(p-values): 1.4406
@@ -183,7 +183,7 @@ Mean of top 4 <span class="math inline">\(-log(\text{p-values with mid-p correct
 <span class="kw">library</span>(png)
 <span class="kw">library</span>(qgraph)
 <span class="kw">multiTree</span>(<span class="dt">xy=</span>xy, <span class="dt">fit=</span>fit, <span class="dt">filename=</span><span class="st">&quot;first_example&quot;</span>)</code></pre></div>
-<pre><code>## Output stored in /tmp/Rtmp0QAefy/Rbuild3f5c64f05ef/MultiFit/vignettes/first_example.pdf</code></pre>
+<pre><code>## Output stored in /tmp/RtmpRDbEZw/Rbuild3de743b2798a/MultiFit/vignettes/first_example.pdf</code></pre>
 <p>We see that, in agreement with the output of the <code>multiSummary</code> function, nodes 152, 32 and 168 (which correspond to tests 152, 32 and 168) are the largest compared to the other nodes.</p>
 </div>
 <div id="global-test-with-a-permutation-null" class="section level4">
@@ -203,13 +203,13 @@ Mean of top 4 <span class="math inline">\(-log(\text{p-values with mid-p correct
 ## Resolution 2/4: scanning 128 windows, performing 160 tests
 ## Resolution 3/4: scanning 400 windows, performing 608 tests
 ## Resolution 4/4: scanning 400 windows, performing 1108 tests
-## Time difference of 0.07574153 secs
+## Time difference of 0.07389736 secs
 ## Individual tests completed, post-processing...
 ## H: Computing all adjusted p-values...
 ## Hcorrected: Computing all adjusted p-values...
 ## MH: Computing CDF...
 ## MH: Computing all adjusted p-values...
-## Time difference of 0.004372358 secs
+## Time difference of 0.004466772 secs
 ## 
 ## Fisher's Exact Tests:
 ## Mean of -log(p-values): 1.17249
@@ -286,13 +286,13 @@ xy.local =<span class="st"> </span><span class="kw">list</span>(<span class="dt"
 ## Resolution 5/6: scanning 40 windows, performing 156 tests
 ## Resolution 6/6: scanning 40 windows, performing 108 tests
 ## No pairs of margins in resolution 6 had enough observations to be tested.
-## Time difference of 0.3207932 secs
+## Time difference of 0.2017508 secs
 ## Individual tests completed, post-processing...
 ## H: Computing all adjusted p-values...
 ## Hcorrected: Computing all adjusted p-values...
 ## MH: Computing CDF...
 ## MH: Computing all adjusted p-values...
-## Time difference of 0.02270722 secs
+## Time difference of 0.02344441 secs
 ## 
 ## Fisher's Exact Tests:
 ## Mean of -log(p-values): 0.816647
@@ -380,11 +380,11 @@ fit.rtt.circ =<span class="st"> </span><span class="kw">multiFit</span>(<span cl
 ## Resolution 4/6: scanning 40 windows, performing 297 tests
 ## Resolution 5/6: scanning 40 windows, performing 315 tests
 ## Resolution 6/6: scanning 40 windows, performing 324 tests
-## Time difference of 0.0587616 secs
+## Time difference of 0.0567975 secs
 ## Individual tests completed, post-processing...
 ## H: Computing all adjusted p-values...
 ## Hcorrected: Computing all adjusted p-values...
-## Time difference of 0.0003311634 secs
+## Time difference of 0.0003399849 secs
 ## 
 ## Chi Squared Tests:
 ## Mean of -log(p-values): 1.26815
@@ -476,17 +476,17 @@ fit.uv =<span class="st"> </span><span class="kw">multiFit</span>(<span class="d
 ## Resolution 2/4: scanning 16 windows, performing 12 tests
 ## Resolution 3/4: scanning 40 windows, performing 28 tests
 ## Resolution 4/4: scanning 40 windows, performing 36 tests
-## Time difference of 0.01674509 secs
+## Time difference of 0.02278566 secs
 ## Individual tests completed, post-processing...
 ## H: Computing all adjusted p-values...
 ## Hcorrected: Computing all adjusted p-values...
 ## MH: Computing CDF...
 ## MH: Computing all adjusted p-values...
-## Time difference of 0.0006651878 secs
+## Time difference of 0.000638485 secs
 ## Simulating an approximate null distribution...
-## Time difference of 0.3747575 secs
+## Time difference of 0.3708971 secs
 ## Simulating from the theoretical null distribution...
-## Time difference of 2.074674 secs
+## Time difference of 2.157449 secs
 ## 
 ## Fisher's Exact Tests:
 ## Mean of -log(p-values): 1.82851
