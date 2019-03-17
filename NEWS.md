@@ -6,3 +6,6 @@ Fixed issues with std::pow usage, compilation warnings regarding comparison betw
 # MultiFit 0.1.2
 * Corrected saving of temporary files by using "file.path()".
 
+# MultiFit 1.0.0
+* New method to select tests.
+* Moved to STRICT_R_HEADERS

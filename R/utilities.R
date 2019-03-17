@@ -29,16 +29,16 @@
 #' are conditioned on and are in the discretized 2x2 contingency table.
 #' @return List whose elements are \code{significant.tests}, a data frame that summarizes
 #' the main features of the tests and their overall ranking by \code{p}-value and
-#' \code{original.scale.windows}, a list whose number of elements is equal to the number of
+#' \code{original.scale.cuboids}, a list whose number of elements is equal to the number of
 #' significant tests (the same number of rows of the data frame \code{significant.tests}). Each
 #' element corresponds to a test and is a list whose elements are the marginal ranges of
-#' the associated window.
+#' the associated cuboid.
 #' @examples
 #' set.seed(1)
 #' n = 300
-#' d1 = d2 = 2
-#' x = matrix(0, nrow=n, ncol=d1)
-#' y = matrix(0, nrow=n, ncol=d2)
+#' Dx = Dy = 2
+#' x = matrix(0, nrow=n, ncol=Dx)
+#' y = matrix(0, nrow=n, ncol=Dy)
 #' x[,1] = rnorm(n)
 #' x[,2] = runif(n)
 #' y[,1] = rnorm(n)
@@ -56,30 +56,30 @@ multiSummary = function(xy, x=NULL, y=NULL, fit, alpha=0.05, only.rk=NULL,
 
   if (is.vector(x)) x=matrix(x,ncol=1)
   if (is.vector(y)) y=matrix(y,ncol=1)
-  d1 = ncol(x)
-  d2 = ncol(y)
+  Dx = ncol(x)
+  Dy = ncol(y)
 
   pvs=fit$pvs
   a = attributes(pvs)$parameters
 
-  if(d1!=a$d1 | d2!=a$d2) { stop("Mismatch: dimensions of variables differ from p-values data frame dimensions.") }
+  if(Dx!=a$Dx | Dy!=a$Dy) { stop("Mismatch: dimensions of variables differ from p-values data frame dimensions.") }
   if(nrow(x)!=a$n | nrow(y)!=a$n) {
     stop("Mismatch: number of observations in variables differ from p-values data frame number of observations.")
   } else {
     n = a$n
   }
 
-  k1.header = paste0("k1.",1:d1)
-  k2.header = paste0("k2.",1:d2)
-  k.header = c(k1.header, k2.header)
-  l1.header = paste0("l1.",1:d1)
-  l2.header = paste0("l2.",1:d2)
-  l.header = c(l1.header, l2.header)
+  kx.header = paste0("kx.",1:Dx)
+  ky.header = paste0("ky.",1:Dy)
+  k.header = c(kx.header, ky.header)
+  lx.header = paste0("lx.",1:Dx)
+  ly.header = paste0("ly.",1:Dy)
+  l.header = c(lx.header, ly.header)
   kl.header = c(k.header, l.header)
 
-  all.wins = do.call(rbind, lapply(fit$R, `[[`, "wins"))
-  all.wins = all.wins[!duplicated(all.wins[,kl.header]),]
-  all.tables = do.call(rbind, lapply(fit$R, `[[`, "tables"))
+  all.cuboids = do.call(rbind, lapply(fit$all, `[[`, "cuboids"))
+  all.cuboids = all.cuboids[!duplicated(all.cuboids[,kl.header]),]
+  all.tables = do.call(rbind, lapply(fit$all, `[[`, "tables"))
 
   if (is.null(use.pval)) {
     if (is.null(a$p.adjust.methods) & !a$correct) { use.pval = "pv" }
@@ -131,8 +131,8 @@ multiSummary = function(xy, x=NULL, y=NULL, fit, alpha=0.05, only.rk=NULL,
   significant.pvs = pvs[significant.pvs.mask,use.pval]
   significant.tests = all.tables[significant.pvs.mask,,drop=FALSE]
   # if(!is.matrix(significant.tests)) significant.tests = matrix(significant.tests, nrow=1)
-  significant.wins = NULL
-  windows = NULL
+  significant.cuboids = NULL
+  cuboids = NULL
   order.p=order(significant.pvs)
   if (is.null(only.rk)) {
     only.rk = 1:nrow(significant.tests)
@@ -147,59 +147,59 @@ multiSummary = function(xy, x=NULL, y=NULL, fit, alpha=0.05, only.rk=NULL,
     for (t in only.rk) {
       s=significant.tests[order.p[t],]
 
-      w=all.wins[all.wins$win.idx==s["win.idx"],]
-      significant.wins = rbind(significant.wins, w)
+      w=all.cuboids[all.cuboids$cuboid.idx==s["cuboid.idx"],]
+      significant.cuboids = rbind(significant.cuboids, w)
 
-      max.x.tran = ((2*w[l1.header]-0)*2^(-w[k1.header]-1))
-      if (a$rank.transform) max.x = invECDF.x(max.x.tran, 1:d1)
-      if (!a$rank.transform) max.x = invScale01.x(max.x.tran, 1:d1)
-      min.x.tran = ((2*w[l1.header]-2)*2^(-w[k1.header]-1))
-      if (a$rank.transform) min.x = invECDF.x(min.x.tran, 1:d1)
-      if (!a$rank.transform) min.x = invScale01.x(min.x.tran, 1:d1)
+      max.x.tran = ((2*w[lx.header]-0)*2^(-w[kx.header]-1))
+      if (a$rank.transform) max.x = invECDF.x(max.x.tran, 1:Dx)
+      if (!a$rank.transform) max.x = invScale01.x(max.x.tran, 1:Dx)
+      min.x.tran = ((2*w[lx.header]-2)*2^(-w[kx.header]-1))
+      if (a$rank.transform) min.x = invECDF.x(min.x.tran, 1:Dx)
+      if (!a$rank.transform) min.x = invScale01.x(min.x.tran, 1:Dx)
       non.triv.idx.x = which(max.x.tran-min.x.tran<1)
 
-      max.y.tran = ((2*w[l2.header]-0)*2^(-w[k2.header]-1))
-      if (a$rank.transform) max.y = invECDF.y(max.y.tran, 1:d2)
-      if (!a$rank.transform) max.y = invScale01.y(max.y.tran, 1:d2)
-      min.y.tran = ((2*w[l2.header]-2)*2^(-w[k2.header]-1))
-      if (a$rank.transform) min.y = invECDF.y(min.y.tran, 1:d2)
-      if (!a$rank.transform) min.y = invScale01.y(min.y.tran, 1:d2)
+      max.y.tran = ((2*w[ly.header]-0)*2^(-w[ky.header]-1))
+      if (a$rank.transform) max.y = invECDF.y(max.y.tran, 1:Dy)
+      if (!a$rank.transform) max.y = invScale01.y(max.y.tran, 1:Dy)
+      min.y.tran = ((2*w[ly.header]-2)*2^(-w[ky.header]-1))
+      if (a$rank.transform) min.y = invECDF.y(min.y.tran, 1:Dy)
+      if (!a$rank.transform) min.y = invScale01.y(min.y.tran, 1:Dy)
       non.triv.idx.y = which(max.y.tran-min.y.tran<1)
 
-      window.x = lapply(1:d1,
+      cuboid.x = lapply(1:Dx,
                         function(i) {
                           b = t(c(min.x[i], max.x[i]));
                           rownames(b)=i; colnames(b)=c("min","max"); b})
-      names(window.x) = paste0("x",1:d1)
-      window.y = lapply(1:d2,
+      names(cuboid.x) = paste0("x",1:Dx)
+      cuboid.y = lapply(1:Dy,
                         function(j) {
                           b = t(c(min.y[j], max.y[j]));
                           rownames(b)=j; colnames(b)=c("min","max"); b})
-      names(window.y) = paste0("y",1:d2)
-      win.add = list(c(window.x, window.y))
-      names(win.add) = t
-      windows = c(windows, win.add)
+      names(cuboid.y) = paste0("y",1:Dy)
+      cuboid.add = list(c(cuboid.x, cuboid.y))
+      names(cuboid.add) = t
+      cuboids = c(cuboids, cuboid.add)
 
       cat("Ranked #",t,", Test ",s["test.idx"],": x",as.integer(s["i"])," and y",as.integer(s["j"]),sep="")
       if (length(non.triv.idx.x)>0 | length(non.triv.idx.y)>0) cat(" | ")
-      cat(sapply(non.triv.idx.x,function(idx) paste0(round(window.x[[idx]][,"min"],rd),"<=","x",idx,"<",round(window.x[[idx]][,"max"],rd))),sep=", ")
+      cat(sapply(non.triv.idx.x,function(idx) paste0(round(cuboid.x[[idx]][,"min"],rd),"<=","x",idx,"<",round(cuboid.x[[idx]][,"max"],rd))),sep=", ")
       if (length(non.triv.idx.x)>0 & length(non.triv.idx.y)>0) cat(", ")
-      cat(sapply(non.triv.idx.y,function(idx) paste0(round(window.y[[idx]][,"min"],rd),"<=","y",idx,"<",round(window.y[[idx]][,"max"],rd))),sep=", ")
+      cat(sapply(non.triv.idx.y,function(idx) paste0(round(cuboid.y[[idx]][,"min"],rd),"<=","y",idx,"<",round(cuboid.y[[idx]][,"max"],rd))),sep=", ")
       cat(" (p-value=",as.numeric(significant.pvs[order.p[t]]),")\n",sep="")
 
       if (plot.tests) {
         i=as.integer(s["i"]); j=as.integer(s["j"])
-        k1=as.integer(w[k1.header]); l1=as.integer(w[l1.header])
-        k2=as.integer(w[k2.header]); l2=as.integer(w[l2.header])
-        xl = (l1-1)*2^(-k1)
+        kx=as.integer(w[kx.header]); lx=as.integer(w[lx.header])
+        ky=as.integer(w[ky.header]); ly=as.integer(w[ly.header])
+        xl = (lx-1)*2^(-kx)
         x.low = matrix(rep(xl, n), nrow=n, byrow=TRUE)
-        xh = l1*2^(-k1)
+        xh = lx*2^(-kx)
         x.high = matrix(rep(xh, n), nrow=n, byrow=TRUE)
         x.mask = x.tran>=x.low & x.tran<x.high
 
-        yl = (l2-1)*2^(-k2)
+        yl = (ly-1)*2^(-ky)
         y.low = matrix(rep(yl, n), nrow=n, byrow=TRUE)
-        yh = l2*2^(-k2)
+        yh = ly*2^(-ky)
         y.high = matrix(rep(yh, n),nrow=n, byrow=TRUE)
         y.mask = y.tran>=y.low & y.tran<y.high
 
@@ -208,15 +208,15 @@ multiSummary = function(xy, x=NULL, y=NULL, fit, alpha=0.05, only.rk=NULL,
         x.loc = x[,i][mask]
         y.loc = y[,j][mask]
 
-        xl.cond = (l1[-i]-1)*2^(-k1[-i])
+        xl.cond = (lx[-i]-1)*2^(-kx[-i])
         x.low.cond = matrix(rep(xl.cond, n), nrow=n, byrow=TRUE)
-        xh.cond = l1[-i]*2^(-k1[-i])
+        xh.cond = lx[-i]*2^(-kx[-i])
         x.high.cond = matrix(rep(xh.cond, n), nrow=n, byrow=TRUE)
         x.mask.cond = x.tran[,-i]>=x.low.cond & x.tran[,-i]<x.high.cond
 
-        yl.cond = (l2[-j]-1)*2^(-k2[-j])
+        yl.cond = (ly[-j]-1)*2^(-ky[-j])
         y.low.cond = matrix(rep(yl.cond, n), nrow=n, byrow=TRUE)
-        yh.cond = l2[-j]*2^(-k2[-j])
+        yh.cond = ly[-j]*2^(-ky[-j])
         y.high.cond = matrix(rep(yh.cond, n),nrow=n, byrow=TRUE)
         y.mask.cond = y.tran[,-j]>=y.low.cond & y.tran[,-j]<y.high.cond
 
@@ -232,10 +232,10 @@ multiSummary = function(xy, x=NULL, y=NULL, fit, alpha=0.05, only.rk=NULL,
         points(x[,i][mask.cond], y[,j][mask.cond], col="orange", pch=pch1)
         points(x.loc, y.loc, col="red", pch=pch1)
 
-        x.i.min = windows[[which(t==only.rk)]][[paste0("x",i)]][,"min"]
-        x.i.max = windows[[which(t==only.rk)]][[paste0("x",i)]][,"max"]
-        y.j.min = windows[[which(t==only.rk)]][[paste0("y",j)]][,"min"]
-        y.j.max = windows[[which(t==only.rk)]][[paste0("y",j)]][,"max"]
+        x.i.min = cuboids[[which(t==only.rk)]][[paste0("x",i)]][,"min"]
+        x.i.max = cuboids[[which(t==only.rk)]][[paste0("x",i)]][,"max"]
+        y.j.min = cuboids[[which(t==only.rk)]][[paste0("y",j)]][,"min"]
+        y.j.max = cuboids[[which(t==only.rk)]][[paste0("y",j)]][,"max"]
 
         abline(v=x.i.min, col="blue",lty=2)
         abline(v=x.i.max, col="blue",lty=2)
@@ -255,13 +255,13 @@ multiSummary = function(xy, x=NULL, y=NULL, fit, alpha=0.05, only.rk=NULL,
   s1 = matrix(significant.tests[order.p[only.rk],], nrow=length(only.rk))
   colnames(s1)=colnames(significant.tests)
   s2 = significant.pvs[order.p[only.rk]]
-  s3 = significant.wins[,kl.header]
+  s3 = significant.cuboids[,kl.header]
   S = cbind(s0,s1,s2,s3)
   colnames(S)[1] = "overall.rank"
   colnames(S)[10] = use.pval
   rownames(S) = NULL
   return(invisible(list(significant.tests=S,
-                        original.scale.windows = windows)))
+                        original.scale.cuboids = cuboids)))
 }
 
 # ==============================================================================
@@ -341,31 +341,31 @@ multiTree = function(xy, x=NULL, y=NULL, fit, show.all=FALSE,
   if (!is.null(x) & !is.null(y)) {
     if (is.vector(x)) x=matrix(x,ncol=1)
     if (is.vector(y)) y=matrix(y,ncol=1)
-    d1 = ncol(x)
-    d2 = ncol(y)
+    Dx = ncol(x)
+    Dy = ncol(y)
 
-    if(d1!=a$d1 | d2!=a$d2) { stop("Mismatch: dimensions of variables differ from p-values data frame dimensions.") }
+    if(Dx!=a$Dx | Dy!=a$Dy) { stop("Mismatch: dimensions of variables differ from p-values data frame dimensions.") }
     if(nrow(x)!=a$n | nrow(y)!=a$n) {
       stop("Mismatch: number of observations in variables differ from p-values data frame number of observations.")
     } else {
       n = a$n
     }
   } else {
-    d1=a$d1
-    d2=a$d2
+    Dx=a$Dx
+    Dy=a$Dy
     n = a$n
   }
 
-  k1.header = paste0("k1.",1:d1)
-  k2.header = paste0("k2.",1:d2)
-  k.header = c(k1.header, k2.header)
-  l1.header = paste0("l1.",1:d1)
-  l2.header = paste0("l2.",1:d2)
-  l.header = c(l1.header, l2.header)
+  kx.header = paste0("kx.",1:Dx)
+  ky.header = paste0("ky.",1:Dy)
+  k.header = c(kx.header, ky.header)
+  lx.header = paste0("lx.",1:Dx)
+  ly.header = paste0("ly.",1:Dy)
+  l.header = c(lx.header, ly.header)
   kl.header = c(k.header, l.header)
 
-  all.wins = do.call(rbind, lapply(fit$R, `[[`, "wins"))
-  all.tables = do.call(rbind, lapply(fit$R, `[[`, "tables"))
+  all.cuboids = do.call(rbind, lapply(fit$all, `[[`, "cuboids"))
+  all.tables = do.call(rbind, lapply(fit$all, `[[`, "tables"))
 
   if (is.null(use.pval)) {
     if (is.null(a$p.adjust.methods) & !a$correct) { use.pval = "pv" }
@@ -374,7 +374,7 @@ multiTree = function(xy, x=NULL, y=NULL, fit, show.all=FALSE,
   }
 
   tree.struct = NULL
-  tree.struct = split(all.wins$child.of.test, all.wins$win.idx)
+  tree.struct = split(all.cuboids$child.of.test, all.cuboids$cuboid.idx)
 
   # suppressMessages(library(png))
   # suppressMessages(library(qgraph))
@@ -411,7 +411,7 @@ multiTree = function(xy, x=NULL, y=NULL, fit, show.all=FALSE,
 
   # Add network notation:
   if (!show.all) {
-    ranked.tests = do.call(c, lapply(fit$R, `[[`, "rank.tests"))
+    ranked.tests = do.call(c, lapply(fit$all, `[[`, "rank.tests"))
   } else {
     ranked.tests = rep(TRUE,sum(!is.na(pvs$pv)))
   }
@@ -423,7 +423,7 @@ multiTree = function(xy, x=NULL, y=NULL, fit, show.all=FALSE,
 
   # Fill it!
   for (s in 1:n.nodes) {
-    w = as.character(all.tables[all.tables[,"test.idx"]==nodes[s],"win.idx"])
+    w = as.character(all.tables[all.tables[,"test.idx"]==nodes[s],"cuboid.idx"])
     if (w>1) {
       adj[as.character(tree.struct[[w]]),as.character(nodes[s])] = TRUE
     }
@@ -437,44 +437,45 @@ multiTree = function(xy, x=NULL, y=NULL, fit, show.all=FALSE,
            call. = FALSE)
     }
     if (is.null(images.path)) images.path = tempdir()
-    W = all.wins[!duplicated(all.wins$win.idx),]
-    rownames(W) = W$win.idx
+    W = all.cuboids[!duplicated(all.cuboids$cuboid.idx),]
+    rownames(W) = W$cuboid.idx
     rownames(all.tables) = all.tables[,"test.idx"]
     for (m in 1:n.nodes) {
-      w = as.character(all.tables[as.character(nodes[m]),"win.idx"])
-      k1 = unlist(W[w,k1.header])
-      k2 = unlist(W[w,k2.header])
-      l1 = unlist(W[w,l1.header])
-      l2 = unlist(W[w,l2.header])
+      w = as.character(all.tables[as.character(nodes[m]),"cuboid.idx"])
+      kx = unlist(W[w,kx.header])
+      ky = unlist(W[w,ky.header])
+      lx = unlist(W[w,lx.header])
+      ly = unlist(W[w,ly.header])
       i = all.tables[nodes[m],"i"]
       j = all.tables[nodes[m],"j"]
 
-      xl.cond = (l1[-i]-1)*2^(-k1[-i])
+      xl.cond = (lx[-i]-1)*2^(-kx[-i])
       x.low.cond = matrix(rep(xl.cond, n), nrow=n, byrow=TRUE)
-      xh.cond = l1[-i]*2^(-k1[-i])
+      xh.cond = lx[-i]*2^(-kx[-i])
       x.high.cond = matrix(rep(xh.cond, n), nrow=n, byrow=TRUE)
       x.mask.cond = x.tran[,-i]>=x.low.cond & x.tran[,-i]<x.high.cond
 
-      yl.cond = (l2[-j]-1)*2^(-k2[-j])
+      yl.cond = (ly[-j]-1)*2^(-ky[-j])
       y.low.cond = matrix(rep(yl.cond, n), nrow=n, byrow=TRUE)
-      yh.cond = l2[-j]*2^(-k2[-j])
+      yh.cond = ly[-j]*2^(-ky[-j])
       y.high.cond = matrix(rep(yh.cond, n),nrow=n, byrow=TRUE)
       y.mask.cond = y.tran[,-j]>=y.low.cond & y.tran[,-j]<y.high.cond
 
       mask.cond = apply(x.mask.cond, 1, all) & apply(y.mask.cond, 1, all)
 
-      xl = (l1[i]-1)*2^(-k1[i])
-      xh = l1[i]*2^(-k1[i])
+      xl = (lx[i]-1)*2^(-kx[i])
+      xh = lx[i]*2^(-kx[i])
       x.mask = x.tran[,i]>=xl & x.tran[,i]<xh
 
-      yl = (l2[j]-1)*2^(-k2[j])
-      yh = l2[j]*2^(-k2[j])
+      yl = (ly[j]-1)*2^(-ky[j])
+      yh = ly[j]*2^(-ky[j])
       y.mask = y.tran[,j]>=yl & y.tran[,j]<yh
 
       mask = as.logical(x.mask*y.mask*mask.cond)
 
       x.loc = x[,i][mask]
       y.loc = y[,j][mask]
+
       png(file.path(images.path, paste0(node.name, m,".png")), width=80, height=60)
       par(mar=(c(1,0.8,0,0)))
 
@@ -484,19 +485,19 @@ multiTree = function(xy, x=NULL, y=NULL, fit, show.all=FALSE,
       points(x[,i][mask.cond], y[,j][mask.cond], col="orange", pch=".")
       points(x.loc, y.loc, col="red", pch=".")
 
-      max.x.tran = ((2*l1-0)*2^(-k1-1))
-      if (a$rank.transform) max.x = invECDF.x(max.x.tran, 1:d1)
-      if (!a$rank.transform) max.x = invScale01.x(max.x.tran, 1:d1)
-      min.x.tran = ((2*l1-2)*2^(-k1-1))
-      if (a$rank.transform) min.x = invECDF.x(min.x.tran, 1:d1)
-      if (!a$rank.transform) min.x = invScale01.x(min.x.tran, 1:d1)
+      max.x.tran = ((2*lx-0)*2^(-kx-1))
+      if (a$rank.transform) max.x = invECDF.x(max.x.tran, 1:Dx)
+      if (!a$rank.transform) max.x = invScale01.x(max.x.tran, 1:Dx)
+      min.x.tran = ((2*lx-2)*2^(-kx-1))
+      if (a$rank.transform) min.x = invECDF.x(min.x.tran, 1:Dx)
+      if (!a$rank.transform) min.x = invScale01.x(min.x.tran, 1:Dx)
 
-      max.y.tran = ((2*l2-0)*2^(-k2-1))
-      if (a$rank.transform) max.y = invECDF.y(max.y.tran, 1:d2)
-      if (!a$rank.transform) max.y = invScale01.y(max.y.tran, 1:d2)
-      min.y.tran = ((2*l2-2)*2^(-k2-1))
-      if (a$rank.transform) min.y = invECDF.y(min.y.tran, 1:d2)
-      if (!a$rank.transform) min.y = invScale01.y(min.y.tran, 1:d2)
+      max.y.tran = ((2*ly-0)*2^(-ky-1))
+      if (a$rank.transform) max.y = invECDF.y(max.y.tran, 1:Dy)
+      if (!a$rank.transform) max.y = invScale01.y(max.y.tran, 1:Dy)
+      min.y.tran = ((2*ly-2)*2^(-ky-1))
+      if (a$rank.transform) min.y = invECDF.y(min.y.tran, 1:Dy)
+      if (!a$rank.transform) min.y = invScale01.y(min.y.tran, 1:Dy)
 
       x.i.min = min.x[i]
       x.i.max = max.x[i]
@@ -516,8 +517,8 @@ multiTree = function(xy, x=NULL, y=NULL, fit, show.all=FALSE,
       segments(x0=x.i.min,x1=x.i.max, y0=y.j.max,col="blue")
 
       dev.off()
-      images = paste0(images.path,"node",1:n.nodes,".png")
     }
+    images = paste0(images.path,"/node",1:n.nodes,".png")
   }
 
   nodes.pvs = pvs[!is.na(pvs$pv), use.pval][ranked.tests]

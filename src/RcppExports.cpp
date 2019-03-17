@@ -7,8 +7,8 @@
 using namespace Rcpp;
 
 // discretizeCpp
-Rcpp::List discretizeCpp(arma::mat a, arma::mat b, arma::rowvec w, arma::uvec mask, arma::umat ij, int d1, int d2);
-RcppExport SEXP _MultiFit_discretizeCpp(SEXP aSEXP, SEXP bSEXP, SEXP wSEXP, SEXP maskSEXP, SEXP ijSEXP, SEXP d1SEXP, SEXP d2SEXP) {
+Rcpp::List discretizeCpp(arma::mat a, arma::mat b, arma::rowvec w, arma::uvec mask, arma::umat ij, int Dx, int Dy);
+RcppExport SEXP _MultiFit_discretizeCpp(SEXP aSEXP, SEXP bSEXP, SEXP wSEXP, SEXP maskSEXP, SEXP ijSEXP, SEXP DxSEXP, SEXP DySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -17,9 +17,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::rowvec >::type w(wSEXP);
     Rcpp::traits::input_parameter< arma::uvec >::type mask(maskSEXP);
     Rcpp::traits::input_parameter< arma::umat >::type ij(ijSEXP);
-    Rcpp::traits::input_parameter< int >::type d1(d1SEXP);
-    Rcpp::traits::input_parameter< int >::type d2(d2SEXP);
-    rcpp_result_gen = Rcpp::wrap(discretizeCpp(a, b, w, mask, ij, d1, d2));
+    Rcpp::traits::input_parameter< int >::type Dx(DxSEXP);
+    Rcpp::traits::input_parameter< int >::type Dy(DySEXP);
+    rcpp_result_gen = Rcpp::wrap(discretizeCpp(a, b, w, mask, ij, Dx, Dy));
     return rcpp_result_gen;
 END_RCPP
 }

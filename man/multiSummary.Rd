@@ -4,9 +4,9 @@
 \alias{multiSummary}
 \title{Summary of significant tests}
 \usage{
-multiSummary(xy, x = NULL, y = NULL, fit, alpha = 0.05, only.rk = NULL,
-  use.pval = NULL, plot.tests = TRUE, pch = NULL, rd = 2,
-  plot.margin = FALSE)
+multiSummary(xy, x = NULL, y = NULL, fit, alpha = 0.05,
+  only.rk = NULL, use.pval = NULL, plot.tests = TRUE, pch = NULL,
+  rd = 2, plot.margin = FALSE)
 }
 \arguments{
 \item{xy}{A list, whose first element corresponds to the matrix x as below, and
@@ -49,10 +49,10 @@ are conditioned on and are in the discretized 2x2 contingency table.}
 \value{
 List whose elements are \code{significant.tests}, a data frame that summarizes
 the main features of the tests and their overall ranking by \code{p}-value and
-\code{original.scale.windows}, a list whose number of elements is equal to the number of
+\code{original.scale.cuboids}, a list whose number of elements is equal to the number of
 significant tests (the same number of rows of the data frame \code{significant.tests}). Each
 element corresponds to a test and is a list whose elements are the marginal ranges of
-the associated window.
+the associated cuboid.
 }
 \description{
 Provide a post-hoc summary of significant tests. See vignettes for further examples.
@@ -60,9 +60,9 @@ Provide a post-hoc summary of significant tests. See vignettes for further examp
 \examples{
 set.seed(1)
 n = 300
-d1 = d2 = 2
-x = matrix(0, nrow=n, ncol=d1)
-y = matrix(0, nrow=n, ncol=d2)
+Dx = Dy = 2
+x = matrix(0, nrow=n, ncol=Dx)
+y = matrix(0, nrow=n, ncol=Dy)
 x[,1] = rnorm(n)
 x[,2] = runif(n)
 y[,1] = rnorm(n)

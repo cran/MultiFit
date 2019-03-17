@@ -4,14 +4,15 @@
 \alias{multiFit}
 \title{Multiscale Multivariate Framework for Independence Tests}
 \usage{
-multiFit(xy, x = NULL, y = NULL, M = 10L, max.res = NULL,
-  full.coverage.res = NULL, rank.transform = TRUE, test.method = "Fisher",
-  correct = TRUE, min.win.tot = 25L, min.row.tot = 10L,
+multiFit(xy, x = NULL, y = NULL, p_star = NULL, R_max = NULL,
+  R_star = 1, rank.transform = TRUE, test.method = "Fisher",
+  correct = TRUE, min.tbl.tot = 25L, min.row.tot = 10L,
   min.col.tot = 10L, p.adjust.methods = c("H", "Hcorrected", "MH"),
   compute.all.holm = TRUE, cutoff = 0.05, top.max.ps = 4L,
   return.all.pvs = TRUE, save.all.pvs = FALSE, all.pvs.fname = NULL,
-  uv.approx.null = FALSE, uv.exact.null = FALSE, uv.null.sim = 10000L,
-  plot.marginals = FALSE, verbose = FALSE)
+  uv.approx.null = FALSE, uv.exact.null = FALSE,
+  uv.null.sim = 10000L, plot.marginals = FALSE, rk = FALSE, M = 10,
+  verbose = FALSE)
 }
 \arguments{
 \item{xy}{A list, whose first element corresponds to the matrix x as below, and
@@ -24,20 +25,20 @@ number of rows = number of observations.}
 \item{y}{A matrix, number of columns = dimension of random vector,
 number of rows = number of observations.}
 
-\item{M}{A positive integer (or Inf), the number of top ranking
-windows to continue to test at each resolution.}
+\item{p_star}{Numeric, cuboids associated with tests whose p-value is below \code{p_star}
+will be halved and further tested.}
 
-\item{max.res}{A positive integer (or Inf), the maximal number of
+\item{R_max}{A positive integer (or Inf), the maximal number of
 resolutions to scan (algorithm will stop at a lower resolution if
-all windows in it do not meet the criteria specified at min.win.tot,
-min.row.tot and min.col.tot)}
+all tables in it do not meet the criteria specified at \code{min.tbl.tot},
+\code{min.row.tot} and \code{min.col.tot})}
 
-\item{full.coverage.res}{A positive integer, if set to an integer
-between 0 and \code{max.res}, all tests up to and including resolution \code{full.coverage.res}
+\item{R_star}{A positive integer, if set to an integer
+between 0 and \code{R_max}, all tests up to and including resolution \code{R_star}
 will be performed (algorithm will stop at a lower resolution than requested if
-all windows in it do not meet the criteria specified at min.win.tot,
-min.row.tot and min.col.tot). For higher resolutions the children of the
-top \code{M} ranking windows will be selected.}
+all tables in it do not meet the criteria specified at \code{min.tbl.tot},
+\code{min.row.tot} and \code{min.col.tot}). For higher resolutions only the children of 
+tests with p-value lower than \code{p_star} will be considered.}
 
 \item{rank.transform}{Logical, if \code{TRUE}, marginal rank transform is
 performed on all margins of \code{x} and \code{y}. If \code{FALSE}, all
@@ -53,8 +54,8 @@ the hypergeometric distribution with a normal distribution (fastest).}
 Fisher's exact test, or Yates corrected \code{p}-values for the Chi-squared test,
 or Williams corrected \code{p}-values for the likelihood-ratio test.}
 
-\item{min.win.tot}{Non-negative integer, the minimal number of observations
-per window below which a \code{p}-value for a given window will not be computed.}
+\item{min.tbl.tot}{Non-negative integer, the minimal number of observations
+per table below which a \code{p}-value for a given table will not be computed.}
 
 \item{min.row.tot}{Non-negative integer, the minimal number of observations
 for row totals in the 2x2 contingency tables below which a contingency table will not be tested.}
@@ -102,6 +103,15 @@ in a univariate case when an exact or approximate null distribution is simulated
 \item{plot.marginals}{Logical, if \code{TRUE} plots the marginal scatter plots between
 all pairs of margins of x and y, before and after rank transforming or scaling them.}
 
+\item{rk}{Logical, if \code{FALSE}, select only tests with \code{p}-values 
+more extreme than \code{p_star} to halve and further test. FWER control guaranteed. 
+If \code{TRUE}, choose at each resolution the \code{M} tests with the most extreme 
+\code{p}-values to further halve and test.}
+
+\item{M}{A positive integer (or Inf), the number of top ranking
+tests to continue to split at each resolution. FWER control not guaranteed 
+for this method.}
+
 \item{verbose}{Logical.}
 }
 \value{
@@ -115,20 +125,20 @@ if \code{p.adjust.methods} is \code{NULL}.
 \code{pvs}, a data frame that contains all \code{p}-values and adjusted
 \code{p}-values that are computed. Returned if \code{return.all.pvs} is \code{TRUE}.
 
-\code{R}, a nested list. Each entry is named and contains data about a resolution
-that was tested. Each resolution is a list in itself, with \code{wins}, a summary of
-all tested windows in a resolution, \code{tables}, a summary of all 2x2
+\code{all}, a nested list. Each entry is named and contains data about a resolution
+that was tested. Each resolution is a list in itself, with \code{cuboids}, a summary of
+all tested cuboids in a resolution, \code{tables}, a summary of all 2x2
 contingency tables in a resolution, \code{pv}, a numerical vector containing the
 \code{p}-values from the tests of independence on 2x2 contingency table in \code{tables}
-that meet the criteria defined by \code{min.win.tot}, \code{min.row.tot} and \code{min.col.tot}.
+that meet the criteria defined by \code{min.tbl.tot}, \code{min.row.tot} and \code{min.col.tot}.
 The length of \code{pv} is equal to the number of rows of \code{tables}. \code{pv.correct},
 similar to the above \code{pv}, corrected \code{p}-values are computed and returned when
 \code{correct} is \code{TRUE}. \code{rank.tests}, logical vector that indicates
 whether or not a test was ranked among the top \code{M} tests in a resolution. The
-length of \code{rank.tests} is equal to the number of rows of \code{tables}. \code{parent.wins},
-an integer vector, indicating which windows in a resolution are associated with
-the ranked tests, and will be further halved in the next higher resolution (same windows may
-have multiple children). \code{parent.tests}, a logical vector of the same length as the
+length of \code{rank.tests} is equal to the number of rows of \code{tables}. \code{parent.cuboids},
+an integer vector, indicating which cuboids in a resolution are associated with
+the ranked tests, and will be further halved in the next higher resolution.
+\code{parent.tests}, a logical vector of the same length as the
 number of rows of \code{tables}, indicating whether or not a test was chosen as a parent
 test (same tests may have multiple children).
 
@@ -145,9 +155,9 @@ See vignettes for further examples.
 \examples{
 set.seed(1)
 n = 300
-d1 = d2 = 2
-x = matrix(0, nrow=n, ncol=d1)
-y = matrix(0, nrow=n, ncol=d2)
+Dx = Dy = 2
+x = matrix(0, nrow=n, ncol=Dx)
+y = matrix(0, nrow=n, ncol=Dy)
 x[,1] = rnorm(n)
 x[,2] = runif(n)
 y[,1] = rnorm(n)

@@ -10,10 +10,10 @@ Rcpp::List discretizeCpp( arma::mat a,
                           arma::rowvec w,
                           arma::uvec mask,
                           arma::umat ij,
-                          int d1,
-                          int d2
+                          int Dx,
+                          int Dy
                        ) {
-  // # Examine only data points from parent window:
+  // # Examine only data points from parent cuboid:
   arma::uvec msk = find(mask>0);
   a = a.rows(msk);
   b = b.rows(msk);
@@ -21,19 +21,19 @@ Rcpp::List discretizeCpp( arma::mat a,
   int m = a.n_rows;
   int o = accu(mask);
 
-  rowvec l1 = w.subvec( d1+d2, d1+d2+d1-1 );
-  rowvec k1 = w.subvec( 0, d1-1 );
-  rowvec p2k1(d1);
-  for (int i=0; i<d1; i++) p2k1(i) = pow(2, -k1(i));
-  rowvec xl = (l1-1.0) % p2k1;
-  rowvec xh = l1 % p2k1;
+  rowvec lx = w.subvec( Dx+Dy, Dx+Dy+Dx-1 );
+  rowvec kx = w.subvec( 0, Dx-1 );
+  rowvec p2kx(Dx);
+  for (int i=0; i<Dx; i++) p2kx(i) = pow(2, -kx(i));
+  rowvec xl = (lx-1.0) % p2kx;
+  rowvec xh = lx % p2kx;
 
-  rowvec l2 = w.subvec( d1+d2+d1, d1+d2+d1+d2-1 );
-  rowvec k2 = w.subvec( d1, d1+d2-1 );
-  rowvec p2k2(d2);
-  for (int j=0; j<d2; j++) p2k2(j) = pow(2, -k2(j));
-  rowvec yl = (l2-1.0) % p2k2;
-  rowvec yh = l2 % p2k2;
+  rowvec ly = w.subvec( Dx+Dy+Dx, Dx+Dy+Dx+Dy-1 );
+  rowvec ky = w.subvec( Dx, Dx+Dy-1 );
+  rowvec p2ky(Dy);
+  for (int j=0; j<Dy; j++) p2ky(j) = pow(2, -ky(j));
+  rowvec yl = (ly-1.0) % p2ky;
+  rowvec yh = ly % p2ky;
 
   // # For each pair of margins, discretize to a 2x2 contingecy table:
   rowvec xm = (xl+xh)/2.0;

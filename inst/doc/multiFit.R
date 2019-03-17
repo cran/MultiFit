@@ -31,39 +31,35 @@ xy = list(x=x,y=y)
 fit = multiFit(xy, verbose=TRUE)
 
 ## ---- fig.show='hold'----------------------------------------------------
-multiSummary(xy=xy, fit=fit, alpha=0.005)
+multiSummary(xy=xy, fit=fit, alpha=0.05)
 
 ## ------------------------------------------------------------------------
-# And plot a DAG representation of the ranked windows:
+# And plot a DAG representation of the ranked tests:
 library(png)
 library(qgraph)
 multiTree(xy=xy, fit=fit, filename="first_example")
 
-## ---- eval=F-------------------------------------------------------------
-#  perm.null.first_example = permNullTest(perm.null.sim=1000L, xy=xy, fit=fit,
-#                                         verbose=TRUE)
-
 ## ------------------------------------------------------------------------
-fit100 = multiFit(xy, M=100, verbose=TRUE)
-multiSummary(xy=xy, fit=fit100, alpha=0.005, plot.tests=FALSE)
+fit1 = multiFit(xy, p_star = 0.1, verbose=TRUE)
+multiSummary(xy=xy, fit=fit1, alpha=0.005, plot.tests=FALSE)
 
 ## ---- eval=F-------------------------------------------------------------
-#  # 1. set M=Inf, running through all windows up to the maximal resolution
+#  # 1. set p_star=Inf, running through all tables up to the maximal resolution
 #  # which by default is set to log2(n/100):
-#  ex1 = multiFit(xy, M=Inf)
+#  ex1 = multiFit(xy, p_star = 1)
 #  
-#  # 2. set both M=Inf and the maximal resolution max.res=Inf.
+#  # 2. set both p_star=1 and the maximal resolution R_max=Inf.
 #  # In this case, the algorithm will scan through higher and higher resolutions,
-#  # until there are no more windows that satisfy the minimum requirements for
-#  # marginal totals: min.win.tot, min.row.tot and min.col.tot (whose default values
+#  # until there are no more tables that satisfy the minimum requirements for
+#  # marginal totals: min.tbl.tot, min.row.tot and min.col.tot (whose default values
 #  # are presented below):
-#  ex2 = multiFit(xy, M=Inf, max.res=Inf,
-#                 min.win.tot = 25L, min.row.tot = 10L, min.col.tot = 10L)
+#  ex2 = multiFit(xy, p_star = 1, R_max=Inf,
+#                 min.tbl.tot = 25L, min.row.tot = 10L, min.col.tot = 10L)
 #  
 #  # 3. set smaller minimal marginal totals, that will result in testing
-#  # even more windows in finer resolutions:
-#  ex3 = multiFit(xy, M=Inf, max.res=Inf,
-#                 min.win.tot = 10L, min.row.tot = 4L, min.col.tot = 4L)
+#  # even more tables in higher resolutions:
+#  ex3 = multiFit(xy, p_star = 1, R_max=Inf,
+#                 min.tbl.tot = 10L, min.row.tot = 4L, min.col.tot = 4L)
 
 ## ---- fig.show='hold'----------------------------------------------------
 # Generate data for two random vectors, each of dimension 2, 800 observations:
@@ -85,7 +81,7 @@ y[portion.of.space,2] = x[portion.of.space,2]+(1/12)*w[portion.of.space]
 xy.local = list(x=x, y=y)
 
 ## ---- fig.show='hold'----------------------------------------------------
-fit.local = multiFit(xy=xy.local, full.coverage.res=4, verbose=TRUE)
+fit.local = multiFit(xy=xy.local, R_star=4, verbose=TRUE)
 multiSummary(xy=xy.local, fit=fit.local, plot.margin=TRUE, pch="`")
 
 ## ---- fig.show='hold'----------------------------------------------------
@@ -107,10 +103,15 @@ theta = runif(n,-pi,pi)
 x[,3] = cos(theta) + 0.1*rnorm(n)
 y[,3] = sin(theta) + 0.1*rnorm(n)
 
-plot(x[,2],y[,2], col="grey", pch="x", xlab="x2", ylab="y2")
-plot(x[,2],y[,3], col="grey", pch="x", xlab="x2", ylab="y3")
-plot(x[,3],y[,2], col="grey", pch="x", xlab="x3", ylab="y2")
-plot(x[,3],y[,3], col="grey", pch="x", xlab="x3", ylab="y3")
+par(mfrow=c(3,3))
+par(mgp=c(0,0,0))
+par(mar=c(1.5,1.5,0,0))
+for (i in 1:3) {
+  for (j in 1:3) {
+    plot(x[,i],y[,j], col="black", pch=20, xlab=paste0("x",i), ylab=paste0("y",j),
+         xaxt="n", yaxt="n")
+  }
+}
 
 ## ---- fig.show='hold'----------------------------------------------------
 # And now rotate the circle:
@@ -130,20 +131,26 @@ y.rtt[,1]=y[,1]
 y.rtt[,2]=y[,2]
 y.rtt[,3]=xxy[,3]
 
-plot(x.rtt[,2],y.rtt[,2], col="grey", pch="x", xlab="x2", ylab="y2")
-plot(x.rtt[,2],y.rtt[,3], col="grey", pch="x", xlab="x2", ylab="y3")
-plot(x.rtt[,3],y.rtt[,2], col="grey", pch="x", xlab="x3", ylab="y2")
-plot(x.rtt[,3],y.rtt[,3], col="grey", pch="x", xlab="x3", ylab="y3")
-    
+par(mfrow=c(3,3))
+par(mgp=c(0,0,0))
+par(mar=c(1.5,1.5,0,0))
+for (i in 1:3) {
+  for (j in 1:3) {
+    plot(x.rtt[,i],y.rtt[,j], col="black", pch=20, xlab=paste0("x",i),
+         ylab=paste0("y",j), xaxt="n", yaxt="n")
+  }
+}
+
 xy.rtt.circ = list(x=x.rtt, y=y.rtt)
 
 ## ---- fig.show='hold'----------------------------------------------------
 # This time, try another testing method, chi^2 (faster than the default Fisher's exact test, slightly less powerful):
-fit.rtt.circ = multiFit(xy=xy.rtt.circ, test.method="chi.sq", verbose=TRUE)
-multiSummary(xy=xy.rtt.circ, fit=fit.rtt.circ, only.rk=1:4)
+fit.rtt.circ = multiFit(xy=xy.rtt.circ, test.method="norm.approx", verbose=TRUE)
+
+multiSummary(xy=xy.rtt.circ, fit=fit.rtt.circ, alpha=0.001)
 
 ## ---- fig.show='hold'----------------------------------------------------
-n=550
+n=600
 x=matrix(0,nrow=n,ncol=2)
 x[,1]=runif(n)
 x[,2]=rbeta(n,.3,.3)
@@ -151,13 +158,19 @@ x[,2]=rbeta(n,.3,.3)
 epsilon=rnorm(n,0,0.3)
 
 y=matrix(0,nrow=n,ncol=1)
-y[,1]=sin(10*x[,1])*(x[,2]>0.75)+sin(40*x[,1])*(x[,2]<=0.75)+epsilon
+y[,1]=sin(10*x[,1])*(x[,2]>0.5)+sin(40*x[,1])*(x[,2]<=0.5)+epsilon
 
-plot(x[,1],y[,1], col="grey", pch="x", xlab="x2", ylab="y2")
-plot(x[,2],y[,1], col="grey", pch="x", xlab="x2", ylab="y2")
+par(mfrow=c(1,2))
+par(mgp=c(0,0,0))
+par(mar=c(1.5,1.5,0,0))
+plot(x[,1],y[,1], col="black", pch=20, xlab=paste0("x1"), ylab=paste0("y1"),
+         xaxt="n", yaxt="n")
+plot(x[,2],y[,1], col="black", pch=20, xlab=paste0("x2"), ylab=paste0("y1"),
+         xaxt="n", yaxt="n")
 
 ## ---- fig.show='hold'----------------------------------------------------
-fit.superimpose=multiFit(x=x, y=y, M=100)
+fit.superimpose=multiFit(x=x, y=y)
+
 multiSummary(x=x, y=y, fit=fit.superimpose, alpha=0.0001)
 
 ## ---- fig.show='hold'----------------------------------------------------

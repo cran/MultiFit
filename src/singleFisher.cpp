@@ -22,12 +22,12 @@ Rcpp::List single_Fisher_test(arma::rowvec t,
   all_probs /= sum(all_probs);
   double relErr = 1.0 + 1e-7;
   double pv = accu(all_probs(find(all_probs <= all_probs(n00-lo)*relErr)));
-  if (pv==0) pv = DBL_MIN;
+  if (pv==0) pv = DOUBLE_XMIN;
   double pv_correct = 0;
   if (correct) {
     double relErrNeg = 1 - 1e-7;
     pv_correct = (pv+accu(all_probs(find(all_probs <= all_probs(n00-lo)*relErrNeg))))/2;
-    if (pv_correct==0) pv_correct = DBL_MIN;
+    if (pv_correct==0) pv_correct = DOUBLE_XMIN;
   }
   if (correct & ret_all_probs) {
     all_probs = all_probs(find(all_probs>0));

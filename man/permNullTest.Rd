@@ -4,8 +4,9 @@
 \alias{permNullTest}
 \title{Permutation null distribution}
 \usage{
-permNullTest(perm.null.sim = 10000L, xy, x = x, y = y, fit, parts = 4L,
-  save.perm.null = FALSE, perm.null.fname = NULL, verbose = FALSE)
+permNullTest(perm.null.sim = 10000L, xy, x = x, y = y, fit,
+  parts = 4L, save.perm.null = FALSE, perm.null.fname = NULL,
+  verbose = FALSE)
 }
 \arguments{
 \item{perm.null.sim}{Positive integer, the number of simulated values to be computed
