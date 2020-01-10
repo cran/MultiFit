@@ -124,30 +124,29 @@ xxy = t(rot.mat%*%t(cbind(x[,2],x[,3],y[,3])))
 x.rtt = matrix(0, ncol=3, nrow=n)
 y.rtt = matrix(0, ncol=3, nrow=n)
 
-x.rtt[,1]=x[,1]
-x.rtt[,2]=xxy[,1]
-x.rtt[,3]=xxy[,2]
-y.rtt[,1]=y[,1]
-y.rtt[,2]=y[,2]
-y.rtt[,3]=xxy[,3]
+x.rtt[,1] = x[,1]
+x.rtt[,2] = xxy[,1]
+x.rtt[,3] = xxy[,2]
+y.rtt[,1] = y[,1]
+y.rtt[,2] = y[,2]
+y.rtt[,3] = xxy[,3]
 
-par(mfrow=c(3,3))
-par(mgp=c(0,0,0))
-par(mar=c(1.5,1.5,0,0))
+par(mfrow = c(3,3))
+par(mgp = c(0,0,0))
+par(mar = c(1.5,1.5,0,0))
 for (i in 1:3) {
   for (j in 1:3) {
-    plot(x.rtt[,i],y.rtt[,j], col="black", pch=20, xlab=paste0("x",i),
-         ylab=paste0("y",j), xaxt="n", yaxt="n")
+    plot(x.rtt[,i],y.rtt[,j], col = "black", pch = 20, xlab = paste0("x", i),
+         ylab = paste0("y", j), xaxt = "n", yaxt = "n")
   }
 }
 
-xy.rtt.circ = list(x=x.rtt, y=y.rtt)
+xy.rtt.circ = list(x = x.rtt, y = y.rtt)
 
 ## ---- fig.show='hold'----------------------------------------------------
-# This time, try another testing method, chi^2 (faster than the default Fisher's exact test, slightly less powerful):
-fit.rtt.circ = multiFit(xy=xy.rtt.circ, test.method="norm.approx", verbose=TRUE)
+fit.rtt.circ = multiFit(xy = xy.rtt.circ, R_star = 2, verbose = TRUE)
 
-multiSummary(xy=xy.rtt.circ, fit=fit.rtt.circ, alpha=0.001)
+multiSummary(xy = xy.rtt.circ, fit = fit.rtt.circ, alpha = 0.001)
 
 ## ---- fig.show='hold'----------------------------------------------------
 n=600

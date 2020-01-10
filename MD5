@@ -1,13 +1,13 @@
-c31ae02ea4fb9a35d189727e92a0931d *DESCRIPTION
+e352c1216915cf34b217a60553fb1662 *DESCRIPTION
 7cdb21ed50daff7151ff700e60c15484 *NAMESPACE
-fa81373803b0d5725d89c5f860c70de7 *NEWS.md
+f2e3ef8e440a0179b9e9f8741266bbbb *NEWS.md
 84559cb7654717311305dbc56d23503d *R/RcppExports.R
 49c4f3b07d4d742133827a0c13db2b2b *R/multiFit.R
 e2a04a22ccf4a2c7d067ea10480773e9 *R/utilities.R
-120e8cf1ffee7495b56ac80f6c99b549 *build/vignette.rds
-dd19809964fc2aab503a50f83545e48c *inst/doc/multiFit.R
-b307467cad1a01248b12a3ea5d4327dc *inst/doc/multiFit.Rmd
-0f2c30d529cfb6a28a9bbe75c77921b4 *inst/doc/multiFit.html
+51a19c8d067d1f77d17cb9dbcb7bd676 *build/vignette.rds
+bb83a7df0c0d5867a28850ae5755ecb8 *inst/doc/multiFit.R
+27c6b0b6e54ec7b4f06c30bde53be9c7 *inst/doc/multiFit.Rmd
+fa8c2044d17b3d6962280f2348136a57 *inst/doc/multiFit.html
 ff59ae2b7db1af78a1e243d6aa9223e8 *man/multiFit.Rd
 583c628fe9f9cb01b8470e810845ebdf *man/multiSummary.Rd
 24c974d94ca2f8a36275474a8b68e903 *man/multiTree.Rd
@@ -19,4 +19,4 @@ eb3bb8a483e5d76ae1fee5f66a3d258a *src/discretize.cpp
 5120ed4c119bf9f80344523e716d4e62 *src/makeCDF.cpp
 324adca2928dcaede622a7631e8b1f0d *src/singleFisher.cpp
 586fa93f0630ffe12e2846d4055e581a *src/stepFunRcpp.cpp
-b307467cad1a01248b12a3ea5d4327dc *vignettes/multiFit.Rmd
+27c6b0b6e54ec7b4f06c30bde53be9c7 *vignettes/multiFit.Rmd

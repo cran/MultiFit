@@ -9,3 +9,6 @@ Fixed issues with std::pow usage, compilation warnings regarding comparison betw
 # MultiFit 1.0.0
 * New method to select tests.
 * Moved to STRICT_R_HEADERS
+
+# MultiFit 1.0.1
+* Updates to vignette.
