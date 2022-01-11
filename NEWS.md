@@ -12,3 +12,7 @@ Fixed issues with std::pow usage, compilation warnings regarding comparison betw
 
 # MultiFit 1.0.1
 * Updates to vignette.
+
+# MultiFIT 1.1.0
+* Adding optional stopping rule.
+* Removing legacy code: univariate permutation nulls. Modified Holm correction.

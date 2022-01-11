@@ -5,15 +5,7 @@ discretizeCpp <- function(a, b, w, mask, ij, Dx, Dy) {
     .Call(`_MultiFit_discretizeCpp`, a, b, w, mask, ij, Dx, Dy)
 }
 
-make_CDF <- function(lp, col0_tot, row1_tot, min_margin, ALL_PROBS, compute_all_holm, min_p) {
-    .Call(`_MultiFit_make_CDF`, lp, col0_tot, row1_tot, min_margin, ALL_PROBS, compute_all_holm, min_p)
-}
-
 single_Fisher_test <- function(t, correct, ret_all_probs) {
     .Call(`_MultiFit_single_Fisher_test`, t, correct, ret_all_probs)
-}
-
-genStepFunCpp <- function(SPS, sort_p, lc, lp) {
-    .Call(`_MultiFit_genStepFunCpp`, SPS, sort_p, lc, lp)
 }
 
