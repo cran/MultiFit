@@ -16,3 +16,7 @@ Fixed issues with std::pow usage, compilation warnings regarding comparison betw
 # MultiFIT 1.1.0
 * Adding optional stopping rule.
 * Removing legacy code: univariate permutation nulls. Modified Holm correction.
+
+# MultiFIT 1.1.1
+* Conforming to Rcpp 1.0.8
+* Change DOUBLE_XMIN to DBL_MIN

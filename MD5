@@ -1,6 +1,6 @@
-e47c81e8fed070dbeeddd34cd15a9398 *DESCRIPTION
+1c390e471cb75a67e142e1e5a08d74e2 *DESCRIPTION
 b505a449933bf23ea2d2384675ba921b *NAMESPACE
-d1b03e6d4858224b9d275ac4dc98efaa *NEWS.md
+3b9501320ec55ce447ad8ccd43b3eca5 *NEWS.md
 249ec5d562c384b9d982b411d35f19c3 *R/MultiFIT.R
 b36ac94168ee2e038e6e93d8ddf34df3 *R/RcppExports.R
 44b3b11ffa11b7e2d8ec638c050bc368 *R/multiple_testing.R
@@ -8,11 +8,11 @@ f885698ab97db5c65a1108470a18870c *R/utilities.R
 109b6d0f4ca4a2109c019986cab3cfc4 *build/vignette.rds
 57d59e2f518aedd4be06161cf67ad0e4 *inst/doc/MultiFIT.R
 69a4258d0d7fb567133ee7f19e1fd66d *inst/doc/MultiFIT.Rmd
-849031f57f897cbcfdbeb471f5293adf *inst/doc/MultiFIT.html
+d402b69093dfff286ac039ac59165596 *inst/doc/MultiFIT.html
 ab705b59a421ddc82bac296b567c91cf *man/MultiFIT.Rd
 f3189e0e55cebcbf149b296b406920af *man/MultiSummary.Rd
 5a1e13782bb421ac7b79e75028212057 *man/MultiTree.Rd
 ddc1e0e55e428454d525d8ac57a35e77 *src/RcppExports.cpp
 eb3bb8a483e5d76ae1fee5f66a3d258a *src/discretize.cpp
-324adca2928dcaede622a7631e8b1f0d *src/singleFisher.cpp
+b8c0e8f63f293322deca4d7f59dbf7fe *src/singleFisher.cpp
 69a4258d0d7fb567133ee7f19e1fd66d *vignettes/MultiFIT.Rmd
